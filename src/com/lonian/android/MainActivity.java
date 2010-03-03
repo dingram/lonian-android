@@ -39,10 +39,12 @@ public class MainActivity extends Activity {
         // Register the onClick listener with the implementation above
         button.setOnClickListener(new OnClickListener() {
         	public void onClick(View v) {
+        		/*
                 Vibrator vibrator = 
                 	(Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 
-                vibrator.vibrate(50);    
+                vibrator.vibrate(50);
+                */    
                 
                 String result = queryRESTurl("http://lonian.com/since");   
                 
@@ -89,10 +91,13 @@ public class MainActivity extends Activity {
                 return result;   
             }   
         } catch (ClientProtocolException e) {   
+        	Toast.makeText(getBaseContext(), "Could not access server", 3000).show();
             Log.e("REST", "There was a protocol based error", e);   
         } catch (UnknownHostException e) {   
         	Toast.makeText(getBaseContext(), "Could not access server", 3000).show();
+            Log.e("REST", "Unknown host exception", e);   
         } catch (IOException e) {   
+        	Toast.makeText(getBaseContext(), "Could not access server", 3000).show();
             Log.e("REST", "There was an IO Stream related error", e);   
         }   
            
