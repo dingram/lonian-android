@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -16,6 +21,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -69,6 +75,40 @@ public class MainActivity extends Activity {
                 }
         	}
         });        
+        
+        final Activity _this = this;
+
+        button = (Button)findViewById(R.id.btn_auth);
+        button.setOnClickListener(new OnClickListener() {
+        	public void onClick(View v) {
+        		OAuthClient.sendToAuthorize(_this);
+        	}
+        });        
+}
+    
+    @Override
+    public void onResume() {
+        // extract the OAUTH access token if it exists
+        Uri uri = this.getIntent().getData();
+        if(uri != null) {
+          String access_token = uri.getQueryParameter("oauth_token");
+          try {
+			OAuthClient.setVerifier(access_token);
+          } catch (OAuthMessageSignerException e) {
+        	  // TODO Auto-generated catch block
+        	  e.printStackTrace();
+          } catch (OAuthNotAuthorizedException e) {
+        	  // TODO Auto-generated catch block
+        	  e.printStackTrace();
+          } catch (OAuthExpectationFailedException e) {
+        	  // TODO Auto-generated catch block
+        	  e.printStackTrace();
+          } catch (OAuthCommunicationException e) {
+        	  // TODO Auto-generated catch block
+        	  e.printStackTrace();
+          }
+        }
+        super.onResume();
     }
     
     public String queryRESTurl(String url) {   
