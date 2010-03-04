@@ -15,8 +15,8 @@ import oauth.signpost.exception.OAuthNotAuthorizedException;
 import oauth.signpost.signature.HmacSha1MessageSigner;
 
 public class OAuthClient {
-	protected static final String REQUEST_TOKEN_ENDPOINT_URL = "http://api.lonian.com/oauth/request_token"; 
-	protected static final String ACCESS_TOKEN_ENDPOINT_URL  = "http://api.lonian.com/oauth/access_token"; 
+	protected static final String REQUEST_TOKEN_ENDPOINT_URL = "http://api.lonian.com/v1/oauth/request_token"; 
+	protected static final String ACCESS_TOKEN_ENDPOINT_URL  = "http://api.lonian.com/v1/oauth/access_token"; 
 	protected static final String AUTHORIZE_ENDPOINT_URL     = "http://lonian.com/oauth/authorize"; 
 	protected static final String CONSUMER_KEY    = "300e1b1ef27001e9c6a5ba91a49aca6704b8e5ee1";
 	protected static final String CONSUMER_SECRET = "3a8598219d8f4348fa3520a09dd0dbd1";

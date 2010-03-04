@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
                 vibrator.vibrate(50);
                 */    
                 
-                String result = queryRESTurl("http://lonian.com/since");   
+                String result = queryRESTurl("http://api.lonian.com/v1/updates");   
                 
                 if (result != null) {
                 	try{   
