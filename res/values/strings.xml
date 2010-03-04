@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, Lonian!</string>
+    
     <string name="app_name">Lonian</string>
 <string name="btn_updates">Get updates</string>
+<string name="pref_user_title">Username</string>
+<string name="pref_user_summary">Your Lonian username</string>
+<string name="pref_password_title">Password</string>
+<string name="pref_password_summary">Your Lonian password</string>
 </resources>

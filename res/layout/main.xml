@@ -5,4 +5,5 @@
     android:layout_height="fill_parent" android:gravity="top|center_horizontal" android:padding="20dp">
 
 <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/btn_updates" android:id="@+id/btn_updates"></Button>
+<ListView android:id="@+id/ListView01" android:layout_width="wrap_content" android:layout_height="wrap_content"></ListView>
 </LinearLayout>

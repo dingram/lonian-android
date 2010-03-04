@@ -15,7 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -24,10 +24,10 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
-import android.os.Vibrator;
 
 public class MainActivity extends Activity {
-	static final int MENU_QUIT = 1;
+	static final int MENU_QUIT     = 1;
+	static final int MENU_SETTINGS = 2;
 	static final String TAG = "com.lonian.android.MainActivity";
 	
     /** Called when the activity is first created. */
@@ -94,7 +94,7 @@ public class MainActivity extends Activity {
         	Toast.makeText(getBaseContext(), "Could not access server", 3000).show();
             Log.e("REST", "There was a protocol based error", e);   
         } catch (UnknownHostException e) {   
-        	Toast.makeText(getBaseContext(), "Could not access server", 3000).show();
+        	Toast.makeText(this, "Could not access server", 3000).show();
             Log.e("REST", "Unknown host exception", e);   
         } catch (IOException e) {   
         	Toast.makeText(getBaseContext(), "Could not access server", 3000).show();
@@ -106,12 +106,16 @@ public class MainActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_SETTINGS, 0, "Settings").setIcon(android.R.drawable.ic_menu_preferences);
         menu.add(0, MENU_QUIT, 0, "Quit").setIcon(android.R.drawable.ic_menu_close_clear_cancel);
         return true;
     }
     
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+        case MENU_SETTINGS:
+        	startActivity(new Intent(this, PrefsActivity.class));
+        	return true;
         case MENU_QUIT:
         	finish();
         	return true;
