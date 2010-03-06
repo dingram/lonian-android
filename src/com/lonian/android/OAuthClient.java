@@ -59,9 +59,13 @@ public class OAuthClient {
 	}
 	
 	public static void sendToAuthorize(Activity parentActivity) {
-		Intent i = new Intent(Intent.ACTION_VIEW);
+		Log.d(TAG, "Sending to authorize");
+		Log.d(TAG, "Creating Intent");
+		Intent i = new Intent(parentActivity, WebAuthActivity.class);
 		try {
-			i.setData(Uri.parse(getAuthorizeUrl()));
+			Log.d(TAG, "Authorize URL");
+			i.putExtra(WebAuthActivity.AUTH_URL, getAuthorizeUrl());
+			Log.d(TAG, "Starting activity");
 			parentActivity.startActivity(i);
 		} catch (OAuthMessageSignerException e) {
 			// TODO Auto-generated catch block
