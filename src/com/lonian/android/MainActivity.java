@@ -25,8 +25,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +41,37 @@ public class MainActivity extends Activity {
 	static final int MENU_QUIT     = 1;
 	static final int MENU_SETTINGS = 2;
 	static final String TAG = "com.lonian.android.MainActivity";
+
+	static final String OPT_OAUTH_R_TOKEN  = "oauth.request_token";
+	static final String OPT_OAUTH_R_SECRET = "oauth.request_secret";
+	static final String OPT_OAUTH_U_TOKEN  = "oauth.user_token";
+	static final String OPT_OAUTH_U_SECRET = "oauth.user_secret";
+
+	String[] getOAuthRequestTokens() {
+		String token  = getPreferences(MODE_PRIVATE).getString(OPT_OAUTH_R_TOKEN,  null);
+		String secret = getPreferences(MODE_PRIVATE).getString(OPT_OAUTH_R_SECRET, null);
+		return new String[] { token, secret };
+	}
+
+	void setOAuthRequestTokens(String token, String secret) {
+		getPreferences(MODE_PRIVATE).edit()
+		.putString(OPT_OAUTH_R_TOKEN,  token )
+		.putString(OPT_OAUTH_R_SECRET, secret)
+		.commit();
+	}
+
+	String[] getOAuthUserTokens() {
+		String token  = getPreferences(MODE_PRIVATE).getString(OPT_OAUTH_U_TOKEN,  null);
+		String secret = getPreferences(MODE_PRIVATE).getString(OPT_OAUTH_U_SECRET, null);
+		return new String[] { token, secret };
+	}
+
+	void setOAuthUserTokens(String token, String secret) {
+		getPreferences(MODE_PRIVATE).edit()
+			.putString(OPT_OAUTH_U_TOKEN,  token )
+			.putString(OPT_OAUTH_U_SECRET, secret)
+			.commit();
+	}
 
 	/** Called when the activity is first created. */
 	@Override
