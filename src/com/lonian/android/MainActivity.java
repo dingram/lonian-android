@@ -148,6 +148,7 @@ public class MainActivity extends Activity {
 	public void onResume() {
 		// extract the OAUTH access token if it exists
 		Uri uri = this.getIntent().getData();
+		((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancelAll();
 		if(uri != null) {
 			String access_token = uri.getQueryParameter("oauth_token");
 			Log.d(TAG, "Access token: "+access_token);
