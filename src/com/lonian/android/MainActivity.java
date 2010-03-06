@@ -94,8 +94,7 @@ public class MainActivity extends Activity {
 				if (result != null) {
 					try{
 						JSONObject json_result = new JSONObject(result);
-						JSONObject json_meta = json_result.getJSONObject("meta");
-						JSONArray  json_errors = json_meta.getJSONArray("errors");
+						JSONArray  json_errors = json_result.getJSONArray("errors");
 						if (json_errors.length() > 0) {
 							StringBuilder errors = new StringBuilder("Error: ");
 							for (int i=0; i<json_errors.length(); ++i) {
