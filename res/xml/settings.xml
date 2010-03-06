@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<EditTextPreference
-		android:key="user"
-		android:title="@string/pref_user_title"
-		android:summary="@string/pref_user_summary"
-		android:defaultValue=""
-		android:inputType="textEmailAddress" />
-	<EditTextPreference
-		android:key="password"
-		android:title="@string/pref_password_title"
-		android:summary="@string/pref_password_summary"
-		android:defaultValue=""
-		android:password="true" />
+	
+	
+<CheckBoxPreference android:key="update_last_seen" android:summary="@string/pref_update_seen_summary" android:title="@string/pref_update_seen"></CheckBoxPreference>
 </PreferenceScreen>

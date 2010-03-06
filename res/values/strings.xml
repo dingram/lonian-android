@@ -3,9 +3,9 @@
     
     <string name="app_name">Lonian</string>
 <string name="btn_updates">Get updates</string>
-<string name="pref_user_title">Username</string>
-<string name="pref_user_summary">Your Lonian username</string>
-<string name="pref_password_title">Password</string>
-<string name="pref_password_summary">Your Lonian password</string>
+<string name="pref_update_seen">Update &quot;last seen&quot;</string>
+<string name="pref_update_seen_summary">Synchronise &quot;last seen&quot; update across sessions</string>
+
+
 <string name="btn_auth">Authorize</string>
 </resources>
