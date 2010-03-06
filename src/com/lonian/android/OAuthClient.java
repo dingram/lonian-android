@@ -1,5 +1,7 @@
 package com.lonian.android;
 
+import org.apache.http.HttpRequest;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -56,6 +58,14 @@ public class OAuthClient {
         provider.retrieveAccessToken(consumer, verificationCode);
         Log.d(TAG, "Token: " + consumer.getToken());
         Log.d(TAG, "Secret: " + consumer.getTokenSecret());
+	}
+	
+	public static oauth.signpost.http.HttpRequest sign(HttpRequest request) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
+		return consumer.sign(request);
+	}
+	
+	public static oauth.signpost.http.HttpRequest sign(Object request) throws OAuthMessageSignerException, OAuthExpectationFailedException, OAuthCommunicationException {
+		return consumer.sign(request);
 	}
 	
 	public static void sendToAuthorize(Activity parentActivity) {

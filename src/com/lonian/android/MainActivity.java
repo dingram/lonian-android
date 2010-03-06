@@ -150,8 +150,10 @@ public class MainActivity extends Activity {
 		Uri uri = this.getIntent().getData();
 		if(uri != null) {
 			String access_token = uri.getQueryParameter("oauth_token");
+			Log.d(TAG, "Access token: "+access_token);
+			Toast.makeText(this, "Got token: "+access_token, Toast.LENGTH_LONG);
 			try {
-				OAuthClient.setVerifier(access_token);
+				OAuthClient.setVerifier(null);
 			} catch (OAuthMessageSignerException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -175,6 +177,7 @@ public class MainActivity extends Activity {
 		HttpResponse response;
 
 		try {
+			OAuthClient.sign(httpget);
 			response = httpclient.execute(httpget);
 			Log.i(TAG, "Status:[" + response.getStatusLine().toString() + "]");
 			HttpEntity entity = response.getEntity();
@@ -197,6 +200,15 @@ public class MainActivity extends Activity {
 		} catch (IOException e) {
 			Toast.makeText(getBaseContext(), "Could not access server", 3000).show();
 			Log.e("REST", "There was an IO Stream related error", e);
+		} catch (OAuthMessageSignerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthExpectationFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthCommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		return null;
