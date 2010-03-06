@@ -7,4 +7,5 @@
 <Button android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/btn_updates" android:id="@+id/btn_updates"></Button>
 
 <Button android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/btn_auth" android:id="@+id/btn_auth"></Button>
+<Button android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/btn_notify" android:text="@string/btn_notify"></Button>
 </LinearLayout>

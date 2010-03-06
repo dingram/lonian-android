@@ -8,4 +8,6 @@
 
 
 <string name="btn_auth">Authorize</string>
+
+<string name="btn_notify">Notification</string>
 </resources>
