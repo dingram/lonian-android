@@ -1,0 +1,6 @@
+<view class="com.lonian.android.layout.MaxWidthLinearLayout" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:padding="10dp">
+<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/twitter_account"></TextView><Spinner android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/account_list"></Spinner>
+<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:gravity="right" android:id="@+id/tweet_length" android:text="160"></TextView><EditText android:layout_width="fill_parent" android:id="@+id/tweet" android:freezesText="true" android:layout_height="fill_parent" android:layout_weight="1" android:gravity="top|left" android:minLines="2" android:minEms="50"></EditText>
+<Button android:layout_height="wrap_content" android:id="@+id/btn_send" android:layout_width="fill_parent" android:text="@string/btn_send_tweet"></Button>
+
+</view>

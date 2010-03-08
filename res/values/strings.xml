@@ -9,5 +9,14 @@
 
 <string name="btn_auth">Authorize</string>
 
-<string name="btn_notify">Notification</string>
+<string name="btn_deauth">Deauth</string><string name="btn_notify">Notification</string>
+<string name="btn_send_tweet">Send tweet</string>
+<string name="tweet_activity">Send tweet</string>
+<string name="webauth_activity">Authorise Lonian access</string>
+<string name="twitter_account">Twitter account:</string>
+
+<string name="pref_update_interval">Update frequency</string>
+<string name="pref_update_interval_title">Update Interval</string>
+<string name="prefs_updates">Update settings</string>
+<string name="pref_update_interval_summary">How often Lonian should check for updates</string>
 </resources>

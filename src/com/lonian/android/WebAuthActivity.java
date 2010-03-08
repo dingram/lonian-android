@@ -40,7 +40,8 @@ public class WebAuthActivity extends Activity {
 				if (url.startsWith("lonian://oauth-callback", 0)) {
 					Intent intent = new Intent();
 					intent.setData(Uri.parse(url));
-					_this.startActivity(intent);
+					_this.setResult(RESULT_OK, intent);
+					_this.finish();
 					return true;
 				}
 				webView.loadUrl(url);
@@ -69,4 +70,5 @@ public class WebAuthActivity extends Activity {
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.loadUrl(url);
 	}
+
 }
