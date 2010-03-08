@@ -1,14 +1,12 @@
 package com.lonian.android;
 
-import java.io.IOException;
-
-import oauth.signpost.exception.OAuthException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -24,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-import com.lonian.android.oauth.OAuthClient;
+import com.lonian.android.api.TwitterAPI;
 
 public class TweetActivity extends Activity implements OnClickListener, TextWatcher, OnItemSelectedListener {
 	static final String TAG = "com.lonian.android.TweetActivity";
@@ -49,44 +47,22 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 		twitterAccount = (Spinner)findViewById(R.id.account_list);
 		
 		// TODO: make this persist
-		JSONObject json_result;
-		try {
-			json_result = OAuthClient.getInstance().makeRequest("http://api.lonian.com/v1/twitter/accounts");
-			if (json_result != null) {
-				if (json_result.has("accounts")) {
-					JSONArray accounts = json_result.getJSONArray("accounts");
-					String[] items = new String[accounts.length()];
-					for (int i=0; i<accounts.length(); ++i) {
-						JSONObject account = accounts.getJSONObject(i);
-						items[i] = account.getString("username");
-					}
-					ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-					adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-					twitterAccount.setAdapter(adapter);
-				} else {
-					throw new IOException();
+		JSONArray accounts = TwitterAPI.getAccounts();
+		if (accounts != null && accounts.length() > 0) {
+			String[] items = new String[accounts.length()];
+			try {
+				for (int i=0; i<accounts.length(); ++i) {
+					JSONObject account = accounts.getJSONObject(i);
+					items[i] = account.getString("username");
 				}
-			} else {
-				throw new IOException();
+			} catch (JSONException e) {
+				Toast.makeText(this, "Could not fetch list of accounts", 3000).show();
+				finish();
 			}
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Toast.makeText(this, "Could not fetch list of accounts", 3000).show();
-			finish();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Toast.makeText(this, "Could not fetch list of accounts", 3000).show();
-			finish();
-		} catch (OAuthException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Toast.makeText(this, "Could not fetch list of accounts", 3000).show();
-			finish();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			twitterAccount.setAdapter(adapter);
+		} else {
 			Toast.makeText(this, "Could not fetch list of accounts", 3000).show();
 			finish();
 		}
@@ -100,18 +76,19 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 	public void onClick(View v) {
 		if (v.getId() == R.id.btn_send) {
 			if (tweetUsername != null) {
-				JSONObject tweet = new JSONObject();
-				try {
-					tweet.put("account", tweetUsername);
-					tweet.put("message", tweetEntry.getText());
-					Toast.makeText(this, "Sending tweet as "+tweetUsername+"...", 3000).show();
-					OAuthClient.getInstance().makePost("http://api.lonian.com/v1/twitter/tweet", tweet.toString());
-				} catch (Exception e) {
-					e.printStackTrace();
-					Toast.makeText(this, "Tweet failed!", 3000).show();
+				Toast.makeText(this, "Sending tweet as "+tweetUsername+"...", 3000).show();
+				JSONObject result = TwitterAPI.tweet(tweetUsername, tweetEntry.getText().toString());
+				if (result == null) {
+					Toast.makeText(this, "Tweeting failed!", 3000).show();
 				}
 			} else {
-				Toast.makeText(this, "Not sending tweet.", 3000).show();
+			    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+			    alertDialog.setTitle("Tweet error");
+			    alertDialog.setMessage("You must select a valid Twitter account");
+			    alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			        return;
+			      } }); 
 			}
 			finish();
 		}

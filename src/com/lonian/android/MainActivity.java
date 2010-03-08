@@ -1,9 +1,5 @@
 package com.lonian.android;
 
-import java.io.IOException;
-
-import oauth.signpost.exception.OAuthException;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.lonian.android.api.UpdateAPI;
 import com.lonian.android.oauth.OAuthClient;
 
 public class MainActivity extends Activity implements OnClickListener {
@@ -166,7 +163,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.btn_updates:
 			JSONObject json_result = null;
 			try {
-				json_result = oauth.makeRequest("http://api.lonian.com/v1/updates");
+				json_result = UpdateAPI.getUpdates();
 				JSONArray  json_errors = json_result == null ? null : json_result.getJSONArray("errors");
 				if (json_result == null || json_errors == null) {
 					Toast.makeText(this, "Could not parse server output", 3000).show();
@@ -183,12 +180,6 @@ public class MainActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (OAuthException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

@@ -1,27 +1,12 @@
 package com.lonian.android.oauth;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
 import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
 import oauth.signpost.exception.OAuthException;
+import oauth.signpost.http.HttpRequest;
 import oauth.signpost.signature.HmacSha1MessageSigner;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -74,15 +59,18 @@ public class OAuthClient {
 	}
 	
 	public OAuthConsumer getConsumer() {
+		Log.v(TAG, "getConsumer()");
 		return consumer;
 	}
 	
 	public OAuthProvider getProvider() {
+		Log.v(TAG, "getProvider()");
 		return provider;
 	}
 	
 	void restoreTokens(OAuthConsumer consumer) {
 		String[] tokens = getOAuthUserTokens();
+		Log.v(TAG, "Restoring tokens: " + tokens[0] + " and " + tokens[1]);
 		consumer.setTokenWithSecret(tokens[0], tokens[1]);
 	}
 
@@ -98,6 +86,7 @@ public class OAuthClient {
 	}
 	
 	public void deauth() {
+		Log.v(TAG, "Deauth request");
 		setOAuthUserTokens(null, null);
 	}
 
@@ -120,11 +109,13 @@ public class OAuthClient {
 			e.printStackTrace();
 		}
 
+		Log.v(TAG, "Auth URL: "+url);
 		return url;
 	}
 	
 	public void verifyAccess(String verificationCode) {
         try {
+    		Log.v(TAG, "Retrieving access token");
 			provider.retrieveAccessToken(consumer, verificationCode);
 	        
 	        setOAuthUserTokens(consumer.getToken(), consumer.getTokenSecret());
@@ -133,92 +124,19 @@ public class OAuthClient {
 		}
 	}
 
-	static String convertStreamToString(InputStream is) {
-		/*
-		 * To convert the InputStream to String we use the BufferedReader.readLine()
-		 * method. We iterate until the BufferedReader return null which means
-		 * there's no more data to read. Each line will appended to a StringBuilder
-		 * and returned as String.
-		 */
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		StringBuilder sb = new StringBuilder();
-
-		String line = null;
-		try {
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				is.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return sb.toString();
-	}
-	
-	public JSONObject makePost(String url, String body) throws IllegalStateException, IOException, OAuthException {
-		return makePost(url, new StringEntity(body));
-	}
-	
-	public JSONObject makePost(String url, HttpEntity body) throws IllegalStateException, IOException, OAuthException {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(url);
-		HttpResponse response;
-		JSONObject result_object = null;
-
-		httppost.setEntity(body);
-		consumer.sign(httppost);
-		Log.d(TAG, "POSTing to "+url);
-		response = httpclient.execute(httppost);
-		Log.d(TAG, "Status:[" + response.getStatusLine().toString() + "]");
-		HttpEntity entity = response.getEntity();
-
-		if (entity != null) {
-			InputStream instream = entity.getContent();
-			String result = convertStreamToString(instream);
-			Log.d(TAG, "Result of converstion: [" + result + "]");
-
-			instream.close();
-			try {
-				result_object = new JSONObject(result);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result_object;
+	public HttpRequest sign(HttpRequest request) throws OAuthException {
+		Log.v(TAG, "Signing request");
+		return consumer.sign(request);
 	}
 
-	public JSONObject makeRequest(String url) throws IllegalStateException, IOException, OAuthException {
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpGet httpget = new HttpGet(url);
-		HttpResponse response;
-		JSONObject result_object = null;
-
-		consumer.sign(httpget);
-		Log.d(TAG, "GETting from "+url);
-		response = httpclient.execute(httpget);
-		Log.d(TAG, "Status:[" + response.getStatusLine().toString() + "]");
-		HttpEntity entity = response.getEntity();
-
-		if (entity != null) {
-			InputStream instream = entity.getContent();
-			String result = convertStreamToString(instream);
-			Log.d(TAG, "Result of converstion: [" + result + "]");
-
-			instream.close();
-			try {
-				result_object = new JSONObject(result);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result_object;
+	public HttpRequest sign(Object request) throws OAuthException {
+		Log.v(TAG, "Signing request");
+		return consumer.sign(request);
 	}
+
+	public String sign(String request) throws OAuthException {
+		Log.v(TAG, "Signing request");
+		return consumer.sign(request);
+	}
+
 }
