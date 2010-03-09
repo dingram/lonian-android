@@ -164,23 +164,38 @@ public class MainActivity extends Activity implements OnClickListener {
 			JSONObject json_result = null;
 			try {
 				json_result = UpdateAPI.getUpdates();
-				JSONArray  json_errors = json_result == null ? null : json_result.getJSONArray("errors");
-				if (json_result == null || json_errors == null) {
+				if (json_result == null) {					
 					Toast.makeText(this, "Could not parse server output", 3000).show();
-				} else if (json_errors.length() > 0) {
-					StringBuilder errors = new StringBuilder("Error: ");
-					for (int i=0; i<json_errors.length(); ++i) {
-						errors.append(json_errors.getString(i));
+				} else if (json_result.has("errors")) {
+					JSONArray json_errors = json_result.getJSONArray("errors");
+					if (json_result == null || json_errors == null) {
+						Toast.makeText(this, "Could not parse server output", 3000).show();
+					} else if (json_errors.length() > 0) {
+						StringBuilder errors = new StringBuilder("Error: ");
+						for (int i=0; i<json_errors.length(); ++i) {
+							errors.append(json_errors.getString(i));
+						}
+						Toast.makeText(this, errors, 3000).show();
 					}
-					Toast.makeText(this, errors, 3000).show();
+				} else if (json_result.has("updates")) {
+					JSONArray updates = json_result.getJSONArray("updates");
+					String message = null;
+					if (updates.length() == 0) {
+						message = "There are no updates";
+					} else if (updates.length() == 1) {
+						message = "There is one update";
+					} else {
+						message = "There are "+updates.length()+" updates"; 
+					}
+					Toast.makeText(this, message, 3000).show();
 				} else {
-					Toast.makeText(this, "There were some updates", 3000).show();
+					Toast.makeText(this, "Could not parse server output", 3000).show();
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
+				Toast.makeText(this, "Could not parse server output", 3000).show();
 				e.printStackTrace();
 			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
+				Toast.makeText(this, "Could not parse server output", 3000).show();
 				e.printStackTrace();
 			}
 			break;
