@@ -27,6 +27,8 @@ import com.lonian.android.api.TwitterAPI;
 public class TweetActivity extends Activity implements OnClickListener, TextWatcher, OnItemSelectedListener {
 	static final String TAG = "com.lonian.android.TweetActivity";
 	static final int MAX_TWEET_LENGTH = 140;
+	static final int CRITICAL_TWEET_LENGTH = 130;
+	static final int WARNING_TWEET_LENGTH = 120;
 	private Button sendButton;
 	private EditText tweetEntry;
 	private Spinner twitterAccount;
@@ -34,6 +36,7 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 	private boolean tweetLengthWasBold = false;
 	private boolean tweetCouldSend = false;
 	private int tweetLengthWasColor = 0xff000000;
+	private int tweetLengthWasBackground = 0xff000000;
 	private String tweetUsername = null;
 
 	@Override
@@ -98,15 +101,18 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 		int tweetLen = tweetEntry.getText().length();
 		int charsLeft = MAX_TWEET_LENGTH - tweetLen;
 
-		boolean shouldBold = tweetLen > 120;
-		boolean canSend = tweetLen > 0 && tweetLen <=140; 
+		boolean shouldBold = tweetLen > WARNING_TWEET_LENGTH;
+		boolean canSend = tweetLen > 0 && tweetLen <=MAX_TWEET_LENGTH; 
 		int textColor = 0xffcccccc;
+		int bgColor = 0x88000000;
 		
-		if (tweetLen > 130) {
+		if (tweetLen > CRITICAL_TWEET_LENGTH) {
 			textColor = 0xffe70d12;
-		} else if (tweetLen > 120) {
+			bgColor = 0xcc000000;
+		} else if (tweetLen > WARNING_TWEET_LENGTH) {
 			//textColor = 0xff5c0002;
-			textColor = 0xffcc3333;
+			textColor = 0xffff6666;
+			bgColor = 0xaa000000;
 		}
 		
 		tweetLength.setText(Integer.toString(charsLeft));
@@ -117,6 +123,10 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 		if (tweetLengthWasColor != textColor) {
 			tweetLength.setTextColor(textColor);
 			tweetLengthWasColor = textColor;
+		}
+		if (tweetLengthWasBackground != bgColor) {
+			tweetLength.setBackgroundColor(bgColor);
+			tweetLengthWasBackground = bgColor;
 		}
 		if (tweetCouldSend != canSend) {
 			sendButton.setEnabled(canSend);
