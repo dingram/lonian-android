@@ -87,7 +87,7 @@ abstract class APIClient {
 		HttpResponse response;
 
 		OAuthClient.getInstance().sign(httpGet);
-		Log.d(TAG, "POSTing to "+url);
+		Log.d(TAG, "GETting from "+url);
 		response = httpClient.execute(httpGet);
 		Log.d(TAG, "Status:[" + response.getStatusLine().toString() + "]");
 		return response;
@@ -130,7 +130,7 @@ abstract class APIClient {
 		HttpResponse response;
 
 		OAuthClient.getInstance().sign(httpDelete);
-		Log.d(TAG, "POSTing to "+url);
+		Log.d(TAG, "DELETE-ing from "+url);
 		response = httpClient.execute(httpDelete);
 		Log.d(TAG, "Status:[" + response.getStatusLine().toString() + "]");
 		return response;
