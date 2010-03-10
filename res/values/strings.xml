@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="twitter_account_fetch_fail">Could not fetch list of accounts</string>
+    <string name="loading_twitter_accounts">Loading Twitter accounts...</string>
     
     <string name="app_name">Lonian</string>
 <string name="btn_updates">Get updates</string>

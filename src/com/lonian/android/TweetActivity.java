@@ -6,11 +6,14 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -38,6 +41,8 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 	private int tweetLengthWasColor = 0xff000000;
 	private int tweetLengthWasBackground = 0xff000000;
 	private String tweetUsername = null;
+	private TwitterAccountsTask mAccountFetcher = null;
+	private ProgressDialog mProgress;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,26 +54,7 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 		tweetEntry = (EditText)findViewById(R.id.tweet);
 		twitterAccount = (Spinner)findViewById(R.id.account_list);
 		
-		// TODO: make this persist
-		JSONArray accounts = TwitterAPI.getAccounts();
-		if (accounts != null && accounts.length() > 0) {
-			String[] items = new String[accounts.length()];
-			try {
-				for (int i=0; i<accounts.length(); ++i) {
-					JSONObject account = accounts.getJSONObject(i);
-					items[i] = account.getString("username");
-				}
-			} catch (JSONException e) {
-				Toast.makeText(this, "Could not fetch list of accounts", 3000).show();
-				finish();
-			}
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, items);
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			twitterAccount.setAdapter(adapter);
-		} else {
-			Toast.makeText(this, "Could not fetch list of accounts", 3000).show();
-			finish();
-		}
+		mAccountFetcher = (TwitterAccountsTask) new TwitterAccountsTask().execute();
 		
 		sendButton.setOnClickListener(this);
 		twitterAccount.setOnItemSelectedListener(this);
@@ -79,10 +65,10 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 	public void onClick(View v) {
 		if (v.getId() == R.id.btn_send) {
 			if (tweetUsername != null) {
-				Toast.makeText(this, "Sending tweet as "+tweetUsername+"...", 3000).show();
+				Toast.makeText(getApplicationContext(), "Sending tweet as "+tweetUsername+"...", 3000).show();
 				JSONObject result = TwitterAPI.tweet(tweetUsername, tweetEntry.getText().toString());
 				if (result == null) {
-					Toast.makeText(this, "Tweeting failed!", 3000).show();
+					Toast.makeText(getApplicationContext(), "Tweeting failed!", 3000).show();
 				}
 			} else {
 			    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
@@ -151,4 +137,63 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 	public void onNothingSelected(AdapterView<?> arg0) {
 	}
 	
+	private void showProgress(boolean visible) {
+		if (visible && mProgress == null) {
+			mProgress = ProgressDialog.show(this, "" , getString(R.string.loading_twitter_accounts), true);
+		}
+		if (!visible && mProgress != null) {
+			mProgress.dismiss();
+			mProgress = null;
+		}
+	}
+	
+	private void setAccounts(String[] accounts) {
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, accounts);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		twitterAccount.setAdapter(adapter);
+	}
+	
+	private void accountFetchError() {
+		Toast.makeText(this, R.string.twitter_account_fetch_fail, 3000).show();
+		finish();		
+	}
+	
+	private class TwitterAccountsTask extends AsyncTask<Void, Void, String[]> {		
+		@Override
+		public void onPreExecute() {
+			showProgress(true);
+		}
+
+		@Override
+		protected String[] doInBackground(Void... params) {
+			// TODO: make this persist
+			JSONArray accounts = TwitterAPI.getAccounts();
+			String[] items = null;
+			
+			if (accounts != null && accounts.length() > 0) {
+				items = new String[accounts.length()];
+				try {
+					for (int i=0; i<accounts.length(); ++i) {
+						JSONObject account = accounts.getJSONObject(i);
+						items[i] = account.getString("username");
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			
+			return items;
+		}
+		
+		@Override
+		public void onPostExecute(String[] result) {
+			showProgress(false);
+			if (result == null) {
+				accountFetchError();
+			} else {
+				setAccounts(result);
+			}
+		}
+	}
 }
