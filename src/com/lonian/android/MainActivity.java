@@ -8,9 +8,11 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -36,11 +38,14 @@ public class MainActivity extends Activity implements OnClickListener {
 	Button deauthButton;
 	Button updateButton;
 	Button notifyButton;
+	private ProgressDialog mProgress;
+	private Context _this;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		_this = this;
 		setContentView(R.layout.main);
 		
 		authButton = (Button)findViewById(R.id.btn_auth);
@@ -161,44 +166,62 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 			
 		case R.id.btn_updates:
-			JSONObject json_result = null;
-			try {
-				json_result = UpdateAPI.getUpdates();
-				if (json_result == null) {					
-					Toast.makeText(this, "Could not parse server output", 3000).show();
-				} else if (json_result.has("errors")) {
-					JSONArray json_errors = json_result.getJSONArray("errors");
-					if (json_result == null || json_errors == null) {
-						Toast.makeText(this, "Could not parse server output", 3000).show();
-					} else if (json_errors.length() > 0) {
-						StringBuilder errors = new StringBuilder("Error: ");
-						for (int i=0; i<json_errors.length(); ++i) {
-							errors.append(json_errors.getString(i));
-						}
-						Toast.makeText(this, errors, 3000).show();
-					}
-				} else if (json_result.has("updates")) {
-					JSONArray updates = json_result.getJSONArray("updates");
-					String message = null;
-					if (updates.length() == 0) {
-						message = "There are no updates";
-					} else if (updates.length() == 1) {
-						message = "There is one update";
-					} else {
-						message = "There are "+updates.length()+" updates"; 
-					}
-					Toast.makeText(this, message, 3000).show();
-				} else {
-					Toast.makeText(this, "Could not parse server output", 3000).show();
-				}
-			} catch (JSONException e) {
-				Toast.makeText(this, "Could not parse server output", 3000).show();
-				e.printStackTrace();
-			} catch (IllegalStateException e) {
-				Toast.makeText(this, "Could not parse server output", 3000).show();
-				e.printStackTrace();
-			}
+			new UpdateFetchTask().execute();
 			break;
+		}
+	}
+
+	private void showProgress(boolean visible) {
+		if (visible && mProgress == null) {
+			mProgress = ProgressDialog.show(this, "" , getString(R.string.fetching_updates), true);
+		}
+		if (!visible && mProgress != null) {
+			mProgress.dismiss();
+			mProgress = null;
+		}
+	}
+
+	
+	private class UpdateFetchTask extends AsyncTask<Void, Void, JSONArray> {		
+		@Override
+		public void onPreExecute() {
+			showProgress(true);
+		}
+
+		@Override
+		protected JSONArray doInBackground(Void... params) {
+			// TODO: make this persist
+			JSONObject response = UpdateAPI.getUpdates();
+			JSONArray updates = null;
+			
+			if (response != null && response.has("updates")) {
+				try {
+					updates = response.getJSONArray("updates");
+				} catch (JSONException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			
+			return updates;
+		}
+		
+		@Override
+		public void onPostExecute(JSONArray result) {
+			showProgress(false);
+			if (result == null) {
+				Toast.makeText(_this, "Could not parse server output", Toast.LENGTH_SHORT).show();
+			} else {
+				String message = null;
+				if (result.length() == 0) {
+					message = "There are no unseen updates";
+				} else if (result.length() == 1) {
+					message = "There is one unseen update";
+				} else {
+					message = "There are "+result.length()+" unseen updates"; 
+				}
+				Toast.makeText(_this, message, Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 }
