@@ -64,10 +64,10 @@ public class TweetActivity extends Activity implements OnClickListener, TextWatc
 	public void onClick(View v) {
 		if (v.getId() == R.id.btn_send) {
 			if (tweetUsername != null) {
-				Toast.makeText(getApplicationContext(), "Sending tweet as "+tweetUsername+"...", 3000).show();
+				Toast.makeText(this, "Sending tweet as "+tweetUsername+"...", 3000).show();
 				JSONObject result = TwitterAPI.tweet(tweetUsername, tweetEntry.getText().toString());
 				if (result == null) {
-					Toast.makeText(getApplicationContext(), "Tweeting failed!", 3000).show();
+					Toast.makeText(this, "Tweeting failed!", 3000).show();
 				}
 			} else {
 			    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
